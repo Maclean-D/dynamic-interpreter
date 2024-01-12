@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" >
+    <script type="module" src="./bundle.js"></script>
+</head>
+
+<body class="background on-background-text">
+      
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: -1.5rem">
+        <h1 class="display-medium">Dynamic Interpreter</h1>
+        <div>
+            <a href="https://github.com/Maclean-D/dynamic-interpreter" target="_blank">
+                <md-icon-button>
+                    <i class="material-icons">info</i>
+                </md-icon-button>
+            </a>
+            <md-outlined-icon-button onclick="openDebugDialog()">
+                <i class="material-icons">bug_report</i>
+            </md-outlined-icon-button>
+            <md-outlined-icon-button onclick="openSystemMessageDialog()">
+                <i class="material-icons">message</i>
+            </md-outlined-icon-button>
+            <md-filled-tonal-icon-button onclick="openSettingsDialog()">
+                <i class="material-icons">settings</i>
+            </md-filled-tonal-icon-button>
+            <md-filled-icon-button onclick="openProfileDialog()">
+                <i class="material-icons">person</i>
+            </md-filled-icon-button>
+        </div>
+    </div>
+
+    <script src="src/dialog.js"></script>
+
+    <!-- Settings Dialog -->
+    <md-dialog id="SettingsDialog">
+        <div slot="headline" style="color: var(--md-sys-color-on-surface-light);">
+            <span style="flex: 1;">Settings</span>
+            <md-icon-button form="settings-form" value="close" aria-label="Close dialog">
+                <i class="material-icons">close</i>
+            </md-icon-button>
+        </div>
+        <form slot="content" id="settings-form" method="dialog">
+            <div style="margin-bottom: 0.5rem;">
+                <md-filled-text-field label="OpenAI API Key" type="text"></md-filled-text-field>
+            </div>
+            <br>
+            <div style="margin-bottom: 0.5rem;">
+                <label for="temperature">Temperature (<span id="temperature-value">0.01</span>)</label>
+                <md-slider id="temperature" min="0.01" max="2" step="0.01" oninput="updateTemperatureValue()"></md-slider>
+            </div>
+            <br>
+            <div style="margin-bottom: 0.5rem;">
+                <label for="context-window">Context Window</label>
+                <md-filled-text-field id="context-window" type="number" max="16000" value="1048"></md-filled-text-field>
+            </div>
+            <br>
+            <div style="margin-bottom: 0.5rem;">
+                <label for="max-tokens">Max Tokens</label>
+                <md-filled-text-field id="max-tokens" type="number" max="16000" value="4096"></md-filled-text-field>
+            </div>
+            <br>
+            <div style="margin-bottom: 0.5rem;">
+                <label for="max-budget">Max Budget</label>
+                <md-outlined-text-field
+                    label="Dollar amount"
+                    type="number"
+                    value="3.00"
+                    prefix-text="$"
+                    min="0.01"
+                    step="0.01">
+                </md-outlined-text-field>
+            </div>
+        </form>
+        <div slot="actions">
+            <md-text-button form="settings-form" value="reset" type="reset"
+              >Reset</md-text-button
+            >
+            <div style="flex: 1"></div>
+            <md-text-button form="settings-form" value="cancel">Cancel</md-text-button>
+            <md-text-button form="settings-form" value="save">Save</md-text-button>
+        </div>
+    </md-dialog>
+
+    <!-- Profile Dialog -->
+    <md-dialog id="ProfileDialog">
+        <div slot="headline" style="color: var(--md-sys-color-on-surface-light);">
+            <span style="flex: 1;">Profile</span>
+            <md-icon-button form="profile-form" value="close" aria-label="Close dialog">
+                <i class="material-icons">close</i>
+            </md-icon-button>
+        </div>
+        <form slot="content" id="profile-form" method="dialog">
+            <div style="margin-bottom: 0.5rem;">
+                <md-filled-text-field label="Name" type="text" value="Human"></md-filled-text-field>
+            </div>
+        </form>
+        <div slot="actions">
+            <md-filled-button form="profile-form" value="save">Save</md-filled-button>
+        </div>
+    </md-dialog>
+
+    <!-- Debug Dialog -->
+    <md-dialog id="DebugDialog">
+        <div slot="headline" style="color: var(--md-sys-color-on-surface-light);">
+            <span style="flex: 1;">Debug Settings</span>
+            <md-icon-button form="debug-form" value="close" aria-label="Close dialog">
+                <i class="material-icons">close</i>
+            </md-icon-button>
+        </div>
+        <form slot="content" id="debug-form" method="dialog">
+            <div style="margin-bottom: 0.5rem;">
+                <md-filled-text-field label="Custom API Base" type="text"></md-filled-text-field>
+            </div>
+            <br>
+            <div style="margin-bottom: 1rem;">
+                <label for="debug-switch">Debug Mode</label>
+                <md-switch id="debug-switch" icons></md-switch>
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <label for="safe-switch">Safe Mode</label>
+                <md-switch id="safe-switch" icons></md-switch>
+            </div>
+        </form>
+        <div slot="actions">
+            <md-text-button form="debug-form" value="reset" type="reset"
+              >Reset</md-text-button
+            >
+            <div style="flex: 1"></div>
+            <md-text-button form="debug-form" value="cancel">Cancel</md-text-button>
+            <md-text-button form="debug-form" value="save">Save</md-text-button>
+        </div>
+    </md-dialog>
+
+    <!-- System Message Dialog -->
+    <md-dialog id="SystemMessageDialog">
+        <div slot="headline" style="color: var(--md-sys-color-on-surface-light);">
+            <span style="flex: 1;">System Message</span>
+            <md-icon-button form="profile-form" value="close" aria-label="Close dialog">
+                <i class="material-icons">close</i>
+            </md-icon-button>
+        </div>
+        <form slot="content" id="system-message-form" method="dialog">
+            <div style="margin-bottom: 0.5rem;">
+                <md-filled-text-field label="Message" type="textarea" style="width: 32rem; height: 24rem; resize: none;"></md-filled-text-field>
+            </div>
+        </form>
+        <div slot="actions">
+            <md-text-button form="system-message-form" value="reset" type="reset"
+              >Reset</md-text-button
+            >
+            <div style="flex: 1"></div>
+            <md-text-button form="system-message-form" value="cancel">Cancel</md-text-button>
+            <md-text-button form="system-message-form" value="save">Save</md-text-button>
+        </div>
+    </md-dialog>
+
+</body>
+
+</html>
+
+    <div style="display: flex;">
+
+        <!-- left column -->
+        <div style="flex: 1; position: relative;">
+            <md-tabs id="provider-tabs">
+                <md-primary-tab>
+                    <md-icon slot="icon"><i class="material-icons">cloud</i></md-icon>
+                    Cloud Provider
+                </md-primary-tab>
+                <md-primary-tab>
+                    <md-icon slot="icon"><i class="material-icons">download_for_offline</i></md-icon>
+                    Local Model
+                </md-primary-tab>
+            </md-tabs>            
+            <div style="display: flex; justify-content: space-between; padding: 10px;">
+                <md-outlined-select id="modelSelect">
+                    <md-select-option value="gpt-3.5-turbo">
+                        <div slot="headline">GPT 3.5 Turbo (Fastest)</div>
+                    </md-select-option>
+                    <md-select-option value="gpt-3.5-turbo-16k">
+                        <div slot="headline">GPT 3.5 Turbo 16k (Fastest + Longer Context Window)</div>
+                    </md-select-option>
+                    <md-select-option selected value="gpt-4">
+                        <div slot="headline">GPT 4 (Most Capable)</div>
+                    </md-select-option>
+                    <md-select-option value="gpt-4-32k">
+                        <div slot="headline">GPT 4 32k (Most Capable + Longer Context Window)</div>
+                    </md-select-option>
+                </md-outlined-select>
+                <div style="display: flex; align-items: center; margin-top: 0.75rem; margin-bottom: 0.75rem;">
+                    <label for="auto-run-switch" style="margin-right: 5px;">
+                        <i class="material-icons">dynamic_form</i>
+                    </label>
+                    <md-switch id="auto-run-switch" selected></md-switch>
+                </div>
+            </div>
+            <div class="secondary-container on-secondary-container-text" id="chat-messages" style="flex: 1; flex-grow: 1; overflow-y: auto; height: calc(100vh - 21rem); border-radius: 1rem;">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            <div class="input-container" style="margin-bottom: 0.5rem; left: 0.5rem; margin-left: 0; width: calc(100% - 4rem); display: flex; align-items: center;">
+                <md-icon-button id="file_upload" onclick="document.getElementById('file_input').click()">
+                    <i class="material-icons">upload_file</i>
+                    <input type="file" id="file_input" style="display: none;" multiple onchange="uploadFiles()">
+                </md-icon-button>                
+                <textarea class="rounded-textbox" placeholder="Can you please..." id="message-input"></textarea>
+                <md-icon-button class="mic">
+                    <i class="material-icons">mic</i>
+                </md-icon-button>
+            </div>
+            <md-filled-icon-button onclick="sendMessage()" style="position: fixed; right: calc(50% + 0.5rem); bottom: 2rem;">
+                <i class="material-icons">send</i>
+            </md-filled-icon-button>            
+            <md-fab variant="primary" label="New Chat" style="position: fixed; bottom: 6rem; left: 50%; transform: translateX(-100%);">
+                <md-icon slot="icon"><i class="material-icons">add</i></md-icon>
+            </md-fab>
+        </div>
+
+        <script src="src/settings.js"></script>
+        <script src="src/file_upload.js"></script>
+        <script src="src/speechrecognition.js"></script>
+        <script src="src/messages.js"></script>
+        <script src="src/new_chat.js"></script>
+        
+        <!-- right column -->
+        <div style="flex: 1; flex-grow: 1; overflow-y: auto; height: calc(100vh - 7rem); margin-left: 1rem;">
+            <h6 class="headline-small" style="margin-top: 0px; margin-bottom: 1rem;">Current Files</h6>
+            <div class= "tertiary-container on-tertiary-container-text" style="flex: 1; flex-grow: 1; overflow-y: auto; height: 12rem; border-radius: 1rem;">
+                <div id="current-files" style="margin-left: 1rem; margin-right: 1rem; margin-top: 1rem;">
+                    <!-- Current files will be added here dynamically -->
+                </div>
+            </div>
+            <h6 class="headline-small" style="margin-top: 1rem; margin-bottom: 1rem;">Dynamic UI</h6>
+            <div class= "surface-variant on-surface-variant-text" style="flex: 1; flex-grow: 1; overflow-y: auto; height: calc(100vh - 26rem); border-radius: 1rem;">
+                <div id="dynamic-ui" style="margin-left: 1rem; margin-right: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+                    <!-- Dynamic UI elements will be added here dynamically -->
+                    <div id="chat-messages" style="margin-left: 1rem; margin-right: 1rem; margin-top: 1rem;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-icons" style="margin-top: -1rem;">person</span>
+                            <h3 class="title-large" style="margin-top: 0; margin-bottom: 1rem; margin-left: 0.5rem;">Human</h3>
+                        </div>
+                        <p class="body-large" style="margin-top: -0.5rem; margin-bottom: 1rem;">Paragraph Text</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
