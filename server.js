@@ -6,6 +6,11 @@ const WebSocket = require('ws');
 const formidable = require('formidable');
 
 const server = http.createServer((req, res) => {
+    if (path.normalize(decodeURI(req.url)) !== decodeURI(req.url)) {
+        res.statusCode = 403;
+        res.end();
+        return;
+    }
     // First, check if this is a file upload request
     if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
         console.log('Upload request received');
